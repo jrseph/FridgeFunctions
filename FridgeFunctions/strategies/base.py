@@ -2,6 +2,8 @@
 # APPLY/MEASURE STRATEGY BASE CLASSES
 # -----------------------------------------------------------
 
+from abc import ABC, abstractmethod
+
 class ApplyStrategy(ABC):
     @abstractmethod
     def setup(self, instrument, **kwargs):

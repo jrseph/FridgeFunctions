@@ -1,3 +1,5 @@
+from FridgeFunction.strategies.base import ApplyStrategy
+
 class AuxOutDCApply(ApplyStrategy):
     """ For applying signals from auxouts 1-4 on the Zurich Instruments MFLI """
 

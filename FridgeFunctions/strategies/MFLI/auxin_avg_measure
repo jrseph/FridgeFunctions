@@ -1,6 +1,6 @@
 from FridgeFunctions.strategies.base import MeasureStrategy
 
-class AuxInMeasureAvg(MeasureStrategy):
+class AuxInAvgMeasure(MeasureStrategy):
     """ For measuring time-averaged signals into the Zurich Instruments MFLI Aux Input """
 
     def __init__(self):

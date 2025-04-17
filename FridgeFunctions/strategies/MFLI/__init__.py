@@ -1,4 +1,4 @@
 from .auxout_dc_apply import AuxOutDCApply
-# from .current import CurrentMeasure
+from .sigout_dc_apply import SigOutDCApply
 
-# __all__ = ["AuxOutDCApply", "CurrentMeasure"]
+__all__ = ["AuxOutDCApply", "SigOutDCApply"]

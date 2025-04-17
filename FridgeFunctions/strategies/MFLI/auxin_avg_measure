@@ -1,3 +1,4 @@
+import numpy as np
 from FridgeFunctions.strategies.base import MeasureStrategy
 
 class AuxInAvgMeasure(MeasureStrategy):

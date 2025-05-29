@@ -7,13 +7,11 @@ setup(
     install_requires=[
         'qcodes',
         'numpy',
-        'logging',
-        'abc'
     ],
     description="A package for automating certain low-temperature measurements in CCMP, QMUL.",
     author="Owen",
     author_email="joseph.r.owen@qmul.ac.uk",
-    url="https://https://github.com/jrseph/FridgeFunctions",
+    url="https://github.com/jrseph/FridgeFunctions",
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',

@@ -7,7 +7,6 @@ setup(
     install_requires=[
         'qcodes',
         'numpy',
-        'time',
         'logging',
         'abc'
     ],

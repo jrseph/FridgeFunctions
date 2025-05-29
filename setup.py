@@ -13,7 +13,7 @@ setup(
     ],
     description="A package for automating certain low-temperature measurements in CCMP, QMUL.",
     author="Owen",
-    author_email="joseph.r.owen@qmul.ac"uk,
+    author_email="joseph.r.owen@qmul.ac.uk",
     url="https://https://github.com/jrseph/FridgeFunctions",
     classifiers=[
         'Programming Language :: Python :: 3',

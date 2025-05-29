@@ -43,6 +43,7 @@ class SigOutDCApply(ApplyStrategy):
                 time.sleep(self.ramp_pause)
         else:
             self.sigout.offset(offset_target)
+        self.sigout.autorange(True)
     
     def reset(self):
         self.apply(0)  # Reset to 0V

@@ -47,7 +47,7 @@ class SigInAvgMeasure(MeasureStrategy):
         self.scope.length(kwargs.get("scope_length", 2**14))
         self.scope.wave.subscribe()
 
-    def measure(self, session, poll_time=None, n_shots=None):
+    def measure(self, session, poll_time=None, n_shots=None, **kwargs):
         """ Note: averaging should be enabled in the MFLI GUI, this is not done here. """
 
         # Only one of poll_time or n_shots should be specified
@@ -77,9 +77,15 @@ class SigInAvgMeasure(MeasureStrategy):
 
         # Then record the data and allow the MFLI to do the averaging
         self.scope.enable(True)
-        logging.debug("Autoranging sigin...")
-        time.sleep(0.1)
-        self.sigin.autorange(True)
+
+        if "range" in kwargs:
+            logging.debug("Ranging sigin...")
+            self.sigin.range(kwargs["range"])
+        else:
+            logging.debug("Autoranging sigin...")
+            time.sleep(poll_time)
+            self.sigin.autorange(True)
+
         time.sleep(0.1)
         logging.debug("Collecting data...")
         poll_result = session.poll(poll_time, timeout=1)
@@ -102,21 +108,31 @@ class SigInAvgMeasure(MeasureStrategy):
         # print()
         # print(poll_result[self.scope.wave][-1]['channelscaling'][self.scope_channel_idx])
 
-        if poll_result and self.scope.wave in poll_result.keys():
-            logging.debug(f"No. of waveforms recorded: {len(poll_result[self.scope.wave])}")
-            raw_wave_data = poll_result[self.scope.wave][-1]['wave']
-            scaling = poll_result[self.scope.wave][-1]['channelscaling'][self.scope_channel_idx]
-            wave_data = raw_wave_data * scaling  # Apply the scaling factor to the raw data
-        else:
-            logging.info("Error retrieving wave data from MFLI scope.")
-            return np.nan
+        # Do further averaging if in "avg" mode
+        if self.mode == 'avg':
+            avg_over_shot = []
+            if poll_result and self.scope.wave in poll_result.keys():
+                logging.debug(f"No. of waveforms recorded: {len(poll_result[self.scope.wave])}")
+                for shot in poll_result[self.scope.wave]:
+                    avg_over_shot.append(np.mean(shot["wave"]) * shot["channelscaling"][0])
+                avg_over_all_shots = np.mean(avg_over_shot)
+                logging.debug(f"Average Hall voltage over {len(poll_result[self.scope.wave])} shots: {avg_over_all_shots}")
+                return avg_over_all_shots
+            else:
+                logging.info("Error retrieving wave data from MFLI scope.")
+                return np.nan
         
-        # Do further averaging if in time domain mode
-        if self.mode == "avg":
-            avg_sigin = np.mean(wave_data)
-            return avg_sigin
+        # Return raw wave data if in "waveform" mode
         elif self.mode == "waveform":
-            return wave_data.reshape(-1)
+            if poll_result and self.scope.wave in poll_result.keys():
+                logging.debug(f"No. of waveforms recorded: {len(poll_result[self.scope.wave])}")
+                raw_wave_data = poll_result[self.scope.wave][-1]['wave']
+                scaling = poll_result[self.scope.wave][-1]['channelscaling'][self.scope_channel_idx]
+                wave_data = raw_wave_data * scaling  # Apply the scaling factor to the raw data
+                return wave_data.reshape(-1)  # To a 1d array
+            else:
+                logging.info("Error retrieving wave data from MFLI scope.")
+                return np.nan
         
     def reset(self):
         self.scope.wave.unsubscribe()
